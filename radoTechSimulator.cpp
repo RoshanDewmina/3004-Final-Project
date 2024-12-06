@@ -1,16 +1,16 @@
-#include "RaDoTechSimulator.h"
+#include "radotechsimulator.h"
 #include <iostream>
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
 
-RaDoTechSimulator::RaDoTechSimulator() 
+RadoTechSimulator::RadoTechSimulator()
     : currentPoint(0), isSkinContact(false) {
     std::srand(std::time(nullptr)); // Seed for random number generation
 }
 
 // Health scan functionality
-void RaDoTechSimulator::startScan() {
+void RadoTechSimulator::startScan() {
     if (!isSkinContact) {
         std::cout << "Device not in contact with skin! Cannot start scan.\n";
         return;
@@ -30,7 +30,7 @@ void RaDoTechSimulator::startScan() {
     }
 }
 
-void RaDoTechSimulator::setSkinContact(bool contact) {
+void RadoTechSimulator::setSkinContact(bool contact) {
     isSkinContact = contact;
     if (contact) {
         std::cout << "Device in contact with skin.\n";
@@ -39,7 +39,7 @@ void RaDoTechSimulator::setSkinContact(bool contact) {
     }
 }
 
-void RaDoTechSimulator::collectDataPoint() {
+void RadoTechSimulator::collectDataPoint() {
     if (!isSkinContact) {
         std::cout << "No skin contact. Unable to collect data at point " << currentPoint + 1 << ".\n";
         return;
@@ -52,26 +52,26 @@ void RaDoTechSimulator::collectDataPoint() {
 }
 
 // User management functionality
-void RaDoTechSimulator::createProfile(int id, const std::string& name, int age, const std::string& gender) {
+void RadoTechSimulator::createProfile(int id, const std::string& name, int age, const std::string& gender) {
     profiles.emplace_back(id, name, age, gender);
     std::cout << "Profile created successfully.\n";
 }
 
-void RaDoTechSimulator::updateProfile(int id, const std::string& name, int age, const std::string& gender) {
+void RadoTechSimulator::updateProfile(int id, const std::string& name, const int age, const std::string& gender) {
     Profile* profile = getProfileById(id);
     if (profile) {
-        profile->name = name;
-        profile->age = age;
-        profile->gender = gender;
+        profile->setName(name);
+        profile->setAge(age);
+        profile->setGender(gender);
        std::cout << "Profile updated successfully.\n";
     } else {
         std::cout << "Profile not found.\n";
     }
 }
 
-void RaDoTechSimulator::deleteProfile(int id) {
+void RadoTechSimulator::deleteProfile(int id) {
     auto it = std::remove_if(profiles.begin(), profiles.end(), [id](const Profile& profile) {
-        return profile.id == id;
+        return profile.getId() == id;
     });
     if (it != profiles.end()) {
         profiles.erase(it, profiles.end());
@@ -81,19 +81,19 @@ void RaDoTechSimulator::deleteProfile(int id) {
     }
 }
 
-void RaDoTechSimulator::displayProfiles() const {
+void RadoTechSimulator::displayProfiles() const {
     std::cout << "User Profiles:\n";
     for (const auto& profile : profiles) {
-        std::cout << "ID: " << profile.id
-                  << ", Name: " << profile.name
-                  << ", Age: " << profile.age
-                  << ", Gender: " << profile.gender << '\n';
+        std::cout << "ID: " << profile.getId()
+                  << ", Name: " << profile.getName()
+                  << ", Age: " << profile.getAge()
+                  << ", Gender: " << profile.getGender() << '\n';
     }
 }
 
-RaDoTechSimulator::Profile* RaDoTechSimulator::getProfileById(int id) {
+Profile* RadoTechSimulator::getProfileById(int id) {
     for (auto& profile : profiles) {
-        if (profile.id == id) {
+        if (profile.getId() == id) {
             return &profile;
         }
     }

@@ -5,7 +5,7 @@
 #include <string>
 #include "profile.h"
 
-class RaDoTechSimulator {
+class RadoTechSimulator {
 private:
 
     int currentPoint;
@@ -14,7 +14,7 @@ private:
     std::vector<Profile> profiles;
 
 public:
-    RaDoTechSimulator();
+    RadoTechSimulator();
 
     // Health scan functionality
     void startScan();

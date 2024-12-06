@@ -2,27 +2,29 @@
 #define PROFILE_H
 
 #include <string>
+#include <QMainWindow>
 
 class Profile {
 private:
-    int id;
-    std::string name;
-    int age;
-    std::string gender;
+    QString id;
+    QString name;
+    QString age;
+    QString gender;
+    std::vector<QString> healthData;
 
 public:
-    Profile(int id, const std::string& name, int age, const std::string& gender);
+    Profile(QString id, QString, QString, QString gender);
 
     // Getters
-    int getId() const;
-    std::string getName() const;
-    int getAge() const;
-    std::string getGender() const;
+    QString getId() const;
+    QString getName() const;
+    QString getAge() const;
+    QString getGender() const;
 
     // Setters
-    void setName(const std::string& name);
-    void setAge(int age);
-    void setGender(const std::string& gender);
+    void setName(const QString name);
+    void setAge(QString age);
+    void setGender(const QString gender);
 };
 
 #endif // PROFILE_H

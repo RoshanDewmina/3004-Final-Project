@@ -1,17 +1,17 @@
 #include "profile.h"
 
 // Constructor
-Profile::Profile(int id, const std::string& name, int age, const std::string& gender)
+Profile::Profile(QString id, const QString name, QString age, QString gender)
     : id(id), name(name), age(age), gender(gender) {}
 
 // Getters
-int Profile::getId() const { return id; }
-std::string Profile::getName() const { return name; }
-int Profile::getAge() const { return age; }
-std::string Profile::getGender() const { return gender; }
+QString Profile::getId() const { return id; }
+QString Profile::getName() const { return name; }
+QString Profile::getAge() const { return age; }
+QString Profile::getGender() const { return gender; }
 
 // Setters
-void Profile::setName(const std::string& name) { this->name = name; }
-void Profile::setAge(int age) { this->age = age; }
-void Profile::setGender(const std::string& gender) { this->gender = gender; }
+void Profile::setName(const QString name) { this->name = name; }
+void Profile::setAge(QString age) { this->age = age; }
+void Profile::setGender(QString gender) { this->gender = gender; }
 
