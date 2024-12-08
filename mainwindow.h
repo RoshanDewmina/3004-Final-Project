@@ -21,6 +21,7 @@ public:
     void createProfile();
     void updateProfile();
     void deleteProfile();
+    void loginProfile();
     Profile* getProfileById(QString id);
     QString generateRandomId();
 
@@ -37,6 +38,7 @@ public:
     bool isSkinContact;
     //std::vector<QString> healthData;
     std::vector<Profile> profiles;
+    Profile currentProfile;
 
 private:
     Ui::MainWindow *ui;

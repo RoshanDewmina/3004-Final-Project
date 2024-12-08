@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->createProfile, &QPushButton::clicked, this, &MainWindow::createProfile);
     connect(ui->updateProfile, &QPushButton::clicked, this, &MainWindow::updateProfile);
     connect(ui->deleteProfile, &QPushButton::clicked, this, &MainWindow::deleteProfile);
+    connect(ui->loginButton, &QPushButton::clicked, this, &MainWindow::loginProfile);
 
     //Data Collection
     connect(ui->startScan, &QPushButton::clicked, this, &MainWindow::startScan);
@@ -53,6 +54,21 @@ void MainWindow::createProfile() {
     ui->createGender->setPlainText("");
 }
 
+void MainWindow::loginProfile(){
+    ui->outputLog->setPlainText("");
+    QString inputId = ui->loginText->toPlainText();
+
+    for (Profile* profile : profiles) {
+         if (profile->getId() == inputId) {
+             ui->outputLog->setPlainText("You are logged in!!!");
+             currentProfile = profile;
+             isLoggedIn = true;
+             return;
+         }
+     }
+    ui->outputLog->setPlainText("The Id does not exist");
+}
+
 void MainWindow::updateProfile() {
     ui->outputLog->setPlainText("");
     QString id = ui->updateID->toPlainText();
@@ -62,20 +78,25 @@ void MainWindow::updateProfile() {
 
     Profile* profile = getProfileById(id);
     if (profile) {
-        if(newName == "" && newAge == "" && newGender == ""){
-            ui->outputLog->setPlainText("You did not enter any new updates");
-            return;
+        if (currentProfile == profile){
+            if(newName == "" && newAge == "" && newGender == ""){
+                ui->outputLog->setPlainText("You did not enter any new updates");
+                return;
+            }
+            if(newName != ""){
+                profile->setName(newName);
+            }
+            if(newAge != ""){
+                profile->setAge(newAge);
+            }
+            if(newGender != ""){
+                profile->setGender(newGender);
+            }
+            ui->outputLog->setPlainText("Profile has been updated!!!");
         }
-        if(newName != ""){
-            profile->setName(newName);
+        else{
+            ui->outputLog->setPlainText("You can only updated your profile");
         }
-        if(newAge != ""){
-            profile->setAge(newAge);
-        }
-        if(newGender != ""){
-            profile->setGender(newGender);
-        }
-        ui->outputLog->setPlainText("Profile has been updated!!!");
     } else {
         ui->outputLog->setPlainText("ID Does not exist");
     }
@@ -84,12 +105,21 @@ void MainWindow::updateProfile() {
     ui->updateGender->setPlainText("");
 }
 
-void MainWindow::deleteProfile(){
+void MainWindow::deleteProfile() {
     ui->outputLog->setPlainText("");
     QString id = ui->deleteID->toPlainText();
-    auto it = std::remove_if(profiles.begin(), profiles.end(), [id](const Profile& profile) {
-        return profile.getId() == id;
+
+    auto it = std::remove_if(profiles.begin(), profiles.end(), [id, this](const Profile* profile) {
+        if (profile->getId() == id) {
+            if (currentProfile != profile) {
+                ui->outputLog->setPlainText("You cannot only delete your profile");
+            }
+            delete profile;
+            return true;
+        }
+        return false;
     });
+
     if (it != profiles.end()) {
         profiles.erase(it, profiles.end());
         ui->outputLog->setPlainText("Profile has been deleted!!!");
@@ -100,8 +130,8 @@ void MainWindow::deleteProfile(){
 
 Profile* MainWindow::getProfileById(QString id) {
     for (auto& profile : profiles) {
-        if (profile.getId() == id) {
-            return &profile;
+        if (profile->getId() == id) {
+            return profile;
         }
     }
     return nullptr;
@@ -110,32 +140,35 @@ Profile* MainWindow::getProfileById(QString id) {
 //<-----------------Data Collection----------------->
 
 void MainWindow::startScan(){
-    ui->outputLog->setPlainText("");
-    if(!isSkinContact){
-        ui->outputLog->setPlainText("Device not in contact with skin. Cannot start the scan");
-        return;
-    }
-
-    currentPoint = 0;
-    healthData.clear();
-
-    while(currentPoint < 24){
-        if(isSkinContact){
-            collectDataAtPoint();
-            deactivateSkinContact();
-            ui->outputLog->setPlainText("Activate skin contact at next point");
-            currentPoint++;
+    if(isLoggedIn){
+        ui->outputLog->setPlainText("");
+        if(!isSkinContact){
+            ui->outputLog->setPlainText("Device not in contact with skin. Cannot start the scan");
+            return;
         }
 
-    }
+        currentPoint = 0;
+        currentProfile->healthData.clear();
 
-    ui->outputLog->setPlainText("Scan complete... Data Collected...");
+        while(currentPoint < 24){
+            if(isSkinContact){
+                collectDataAtPoint();
+                deactivateSkinContact();
+                ui->outputLog->setPlainText("Activate skin contact at next point");
+                currentPoint++;
+            }
+        }
+
+        ui->outputLog->setPlainText("Scan complete... Data Collected...");
+    }else{
+        ui->outputLog->setPlainText("Cannot start scan without logging in");
+    }
 
 }
 
 void MainWindow::collectDataAtPoint(){
     QString value = generateRandomValue();
-    healthData.push_back(value);
+    currentProfile->healthData.push_back(value);
     QString text = QString("Data collected at point %1 with value %2").arg(currentPoint + 1).arg(value);
     ui->outputLog->setPlainText(text);
 }

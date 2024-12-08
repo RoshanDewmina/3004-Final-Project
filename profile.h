@@ -10,16 +10,17 @@ private:
     QString name;
     QString age;
     QString gender;
-    std::vector<QString> healthData;
 
 public:
     Profile(QString id, QString, QString, QString gender);
 
+    std::vector<QString> healthData;
     // Getters
     QString getId() const;
     QString getName() const;
     QString getAge() const;
     QString getGender() const;
+    std::vector<QString> getHealthData();
 
     // Setters
     void setName(const QString name);
