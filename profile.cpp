@@ -1,7 +1,7 @@
 #include "profile.h"
 
 // Constructor
-Profile::Profile(QString id, const QString name, QString age, QString gender)
+Profile::Profile(QString id, QString name, QString age, QString gender)
     : id(id), name(name), age(age), gender(gender) {}
 
 // Getters

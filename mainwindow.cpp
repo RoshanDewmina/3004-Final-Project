@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "radotechsimulator.h"
-
 #include <random>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -46,7 +44,7 @@ void MainWindow::createProfile() {
     QString age = ui->createAge->toPlainText();
     QString name = ui->createName->toPlainText();
     QString gender = ui->createAge->toPlainText();
-    this->profiles.emplace_back(id, name, age, gender);
+    this->profiles.emplace_back(new Profile(id, name, age, gender));
     QString text = QString("Profile created with id %1").arg(id);
     ui->outputLog->setPlainText(text);
     ui->createAge->setPlainText("");
@@ -190,5 +188,3 @@ void MainWindow::activateSkinContact(){
 void MainWindow::deactivateSkinContact(){
     isSkinContact = false;
 }
-
-

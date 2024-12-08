@@ -37,8 +37,9 @@ public:
     int currentPoint;
     bool isSkinContact;
     //std::vector<QString> healthData;
-    std::vector<Profile> profiles;
-    Profile currentProfile;
+    std::vector<Profile*> profiles;
+    Profile* currentProfile;
+    bool isLoggedIn;
 
 private:
     Ui::MainWindow *ui;

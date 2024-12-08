@@ -12,7 +12,7 @@ private:
     QString gender;
 
 public:
-    Profile(QString id, QString, QString, QString gender);
+    Profile(QString id, QString name, QString age, QString gender);
 
     std::vector<QString> healthData;
     // Getters
