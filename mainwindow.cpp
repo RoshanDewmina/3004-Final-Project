@@ -19,8 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->startScan, &QPushButton::clicked, this, &MainWindow::startScan);
 
     //Skin Contact
-    //connect(ui->skinContact, &QPushButton::clicked, this, &MainWindow::activateSkinContact);
-
+    skinContact = new Skincontact(this);
+    connect(ui->activateContact, &QPushButton::clicked, this, &MainWindow::activateSkinContact);
 }
 
 MainWindow::~MainWindow()
@@ -59,12 +59,14 @@ void MainWindow::loginProfile(){
     for (Profile* profile : profiles) {
          if (profile->getId() == inputId) {
              ui->outputLog->setPlainText("You are logged in!!!");
+             ui->loginText->setPlainText("");
              currentProfile = profile;
              isLoggedIn = true;
              return;
          }
      }
     ui->outputLog->setPlainText("The Id does not exist");
+    ui->loginText->setPlainText("");
 }
 
 void MainWindow::updateProfile() {
@@ -111,6 +113,7 @@ void MainWindow::deleteProfile() {
         if (profile->getId() == id) {
             if (currentProfile != profile) {
                 ui->outputLog->setPlainText("You cannot only delete your profile");
+                ui->deleteID->setPlainText("");
             }
             delete profile;
             return true;
@@ -121,8 +124,10 @@ void MainWindow::deleteProfile() {
     if (it != profiles.end()) {
         profiles.erase(it, profiles.end());
         ui->outputLog->setPlainText("Profile has been deleted!!!");
+        ui->deleteID->setPlainText("");
     } else {
         ui->outputLog->setPlainText("ID Does not exist");
+         ui->deleteID->setPlainText("");
     }
 }
 
@@ -137,54 +142,68 @@ Profile* MainWindow::getProfileById(QString id) {
 
 //<-----------------Data Collection----------------->
 
-void MainWindow::startScan(){
-    if(isLoggedIn){
-        ui->outputLog->setPlainText("");
-        if(!isSkinContact){
-            ui->outputLog->setPlainText("Device not in contact with skin. Cannot start the scan");
-            return;
-        }
-
-        currentPoint = 0;
-        currentProfile->healthData.clear();
-
-        while(currentPoint < 24){
-            if(isSkinContact){
-                collectDataAtPoint();
-                deactivateSkinContact();
-                ui->outputLog->setPlainText("Activate skin contact at next point");
-                currentPoint++;
-            }
-        }
-
-        ui->outputLog->setPlainText("Scan complete... Data Collected...");
-    }else{
+void MainWindow::startScan() {
+    if (!isLoggedIn) {
         ui->outputLog->setPlainText("Cannot start scan without logging in");
+        return;
     }
 
+    ui->outputLog->setPlainText("");
+
+    if (!skinContact->getContactStatus()) {
+        ui->outputLog->setPlainText("Device not in contact with skin. Activate skin contact to start the scan.");
+        return;
+    }
+
+    currentPoint = 0;
+    currentProfile->healthData.clear();
+
+    // Use a loop to wait for user interaction for each scan point
+    while (currentPoint < 24) {
+        if (skinContact->getContactStatus()) {
+            collectDataAtPoint();         // Collect data for the current point
+            deactivateSkinContact();      // Automatically deactivate skin contact
+            ui->outputLog->setPlainText(QString("Point %1 scanned. Activate skin contact to continue.").arg(currentPoint + 1));
+            currentPoint++;
+
+            // Wait for the user to reactivate skin contact
+            while (!skinContact->getContactStatus()) {
+                QCoreApplication::processEvents(); // Allow the UI to update and wait for user interaction
+            }
+        } else {
+            ui->outputLog->setPlainText("Activate skin contact to continue scanning.");
+            QCoreApplication::processEvents(); // Allow the UI to update while waiting
+        }
+    }
+
+    ui->outputLog->setPlainText("Scan complete... Data collected.");
 }
 
+
 void MainWindow::collectDataAtPoint(){
-    QString value = generateRandomValue();
+    double value = generateRandomValue();
     currentProfile->healthData.push_back(value);
-    QString text = QString("Data collected at point %1 with value %2").arg(currentPoint + 1).arg(value);
+    QString text = QString("Data collected at point %1").arg(currentPoint + 1);
     ui->outputLog->setPlainText(text);
 }
 
-QString MainWindow::generateRandomValue(){
+double MainWindow::generateRandomValue(){
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(5, 160);
-    QString randomNumber = QString::number(distr(gen));
+    //QString randomNumber = QString::number(distr(gen));
+    double randomNumber = distr(gen);
     return randomNumber;
 }
 
 //<-----------------Skin Contact----------------->
 
 void MainWindow::activateSkinContact(){
-    isSkinContact = true;
+    skinContact->activateContact();
+    ui->skinText->setPlainText("Skin is in contact");
 }
 
 void MainWindow::deactivateSkinContact(){
-    isSkinContact = false;
+    skinContact->deactivateContact();
+    ui->skinText->setPlainText("Skin is not in contact");
 }

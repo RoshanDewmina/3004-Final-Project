@@ -11,11 +11,13 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    profile.cpp
+    profile.cpp \
+    skincontact.cpp
 
 HEADERS += \
     mainwindow.h \
-    profile.h
+    profile.h \
+    skincontact.h
 
 FORMS += \
     mainwindow.ui

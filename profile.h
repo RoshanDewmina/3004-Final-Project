@@ -14,13 +14,13 @@ private:
 public:
     Profile(QString id, QString name, QString age, QString gender);
 
-    std::vector<QString> healthData;
+
     // Getters
     QString getId() const;
     QString getName() const;
     QString getAge() const;
     QString getGender() const;
-    std::vector<QString> getHealthData();
+    std::vector<double> healthData;
 
     // Setters
     void setName(const QString name);

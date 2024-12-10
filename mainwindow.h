@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "profile.h"
+#include "skincontact.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -28,15 +29,14 @@ public:
     //Data Collection
     void startScan();
     void collectDataAtPoint();
-    QString generateRandomValue();
+    double generateRandomValue();
 
     //Skin Contact
     void activateSkinContact();
     void deactivateSkinContact();
 
     int currentPoint;
-    bool isSkinContact;
-    //std::vector<QString> healthData;
+    Skincontact* skinContact;
     std::vector<Profile*> profiles;
     Profile* currentProfile;
     bool isLoggedIn;
