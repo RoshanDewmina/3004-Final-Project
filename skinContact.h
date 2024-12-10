@@ -3,40 +3,20 @@
 
 #include <QObject>
 #include <QString>
+#include <QDebug> // For debug logging
 
-class SkinContact : public QObject {
+class Skincontact : public QObject {
     Q_OBJECT
 
 public:
-    SkinContact(QObject* parent = nullptr);
+    explicit Skincontact(QObject* parent = nullptr);
     void activateContact();
-    /*
-    use this in mainwindow:
-    void MainWindow::activateSkinContact() {
-        skinContact->activateContact();
-    }
-    void MainWindow::deactivateSkinContact() {
-        skinContact->deactivateContact();
-    }
-    */
     void deactivateContact();
     QString getStatus() const;
-signals:
-    void contactStatusChanged(const QString& status);
-
-    /*
-    add something like this in mainwindow: 
-
-    skinContact = new SkinContact(this);
-    connect(skinContact, &SkinContact::contactStatusChanged, this, [this](const QString& status) {
-        ui->outputLog->setPlainText(status);
-    });
-
-    
-    */
+    bool getContactStatus();
 
 private:
-    bool isContacting; 
+    bool isContacting = false;
 };
 
 #endif // SKINCONTACT_H
